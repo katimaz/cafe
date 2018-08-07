@@ -13,11 +13,12 @@
 
 Auth::routes();
 
-Route::get('/', 'HomeController@home');
-Route::get('/en', 'HomeController@enghome');
+//Route::get('/', 'HomeController@home');
+//Route::get('/en', 'HomeController@enghome');
+//
+//Route::get('/order', 'HomeController@index');
 
-Route::get('/order', 'HomeController@index');
-
+Route::get('/', 'AdminController@index')->name('admin');
 Route::get('/admin', 'AdminController@index')->name('admin');
 
 Route::get('/admin/menu/add', 'AdminController@addMenu')->name('admin.menu.add');
@@ -56,6 +57,17 @@ Route::get('/admin/printer/delete/{id}', 'AdminController@deletePrinter')->name(
 //Route::post('/admin/promotion/modify/{id}', 'PromotionController@updatePromotion')->name('admin.promotion.updateProduct');
 //Route::post('/admin/promotion/create', 'PromotionController@createPromotion')->name('admin.promotion.create');
 //Route::get('/admin/promotion/delete/{id}', 'PromotionController@deletePromotion')->name('admin.promotion.deleteProduct');
+
+Route::get('/admin/table', 'AdminController@table')->name('admin.table');
+Route::post('/admin/orderTable', 'AdminController@orderTable')->name('admin.orderTable');
+Route::get('/admin/getOrderTable', 'AdminController@getOrderTable')->name('admin.getOrderTable');
+Route::get('/admin/orderTableDetail', 'AdminController@orderTableDetail')->name('admin.orderTableDetail');
+
+Route::post('/admin/orderAddFood', 'AdminController@orderAddFood')->name('admin.orderAddFood');
+Route::post('/admin/orderPayment', 'AdminController@orderPayment')->name('admin.orderPayment');
+
+Route::get('/admin/orderTablePrintReceipt', 'PrinterController@orderTablePrintReceipt')->name('admin.orderTablePrintReceipt');
+
 
 Route::get('/printer', 'PrinterController@index');
 

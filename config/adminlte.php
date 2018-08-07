@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'title' => 'QuickOrder',
+    'title' => 'Cafe',
 
     'title_prefix' => '',
 
@@ -30,9 +30,9 @@ return [
     |
     */
 
-    'logo' => '<b>Quick</b>Order',
+    'logo' => '<b>Ca</b>fe',
 
-    'logo_mini' => '<b>Qo</b>S',
+    'logo_mini' => '<b>Ca</b>fe',
 
     /*
     |--------------------------------------------------------------------------
@@ -71,7 +71,7 @@ return [
     |
     */
 
-    'collapse_sidebar' => false,
+    'collapse_sidebar' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -107,7 +107,7 @@ return [
     |
     */
     'menu' => [
-        'MAIN NAVIGATION',
+//        'MAIN NAVIGATION',
         [
             'text' => 'Blog1',
             'url'  => 'admin/blog',
@@ -115,51 +115,61 @@ return [
             'model'=> 'blog',
         ],
         [
-            'text'        => 'Menu',
+            'text'        => '菜單',
             'url'         => 'admin/menu',
             'icon'        => 'file',
 //            'label'       => 4,
             'label_color' => 'success',
+            'can'  => 'show-menu',
         ],
         [
-            'text'        => 'Product',
+            'text'        => '食物',
             'url'         => 'admin/product',
             'icon'        => 'cube',
 //            'label'       => 4,
             'label_color' => 'success',
+            'can'  => 'show-menu',
         ],
         [
-            'text'        => 'Order',
+            'text'        => '訂單',
             'url'         => 'admin/order',
             'icon'        => 'clipboard',
 //            'label'       => 4,
             'label_color' => 'success',
         ],
+//        [
+//            'text'        => 'Key',
+//            'url'         => 'admin/printcode',
+//            'icon'        => 'lock',
+////            'label'       => 4,
+//            'label_color' => 'success',
+//        ],
+//        [
+//            'text'        => 'PrintKey',
+//            'url'         => 'admin/showKey',
+//            'icon'        => 'lock',
+////            'label'       => 4,
+//            'label_color' => 'success',
+//        ],
+//        [
+//            'text'        => 'Kitchen',
+//            'url'         => 'order/kitchen',
+//            'icon'        => 'lock',
+////            'label'       => 4,
+//            'label_color' => 'success',
+//        ],
         [
-            'text'        => 'Key',
-            'url'         => 'admin/printcode',
-            'icon'        => 'lock',
-//            'label'       => 4,
-            'label_color' => 'success',
-        ],
-        [
-            'text'        => 'PrintKey',
-            'url'         => 'admin/showKey',
-            'icon'        => 'lock',
-//            'label'       => 4,
-            'label_color' => 'success',
-        ],
-        [
-            'text'        => 'Kitchen',
-            'url'         => 'order/kitchen',
-            'icon'        => 'lock',
-//            'label'       => 4,
-            'label_color' => 'success',
-        ],
-        [
-            'text'        => 'Printer',
+            'text'        => '影印機',
             'url'         => 'admin/printer',
-            'icon'        => 'lock',
+            'icon'        => 'print',
+//            'label'       => 4,
+            'label_color' => 'success',
+            'can'  => 'show-menu',
+        ],
+        [
+            'text'        => '管理',
+            'url'         => 'admin/table',
+            'icon'        => 'table',
 //            'label'       => 4,
             'label_color' => 'success',
         ],
