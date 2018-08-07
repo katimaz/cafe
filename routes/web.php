@@ -16,7 +16,7 @@ Auth::routes();
 //Route::get('/', 'HomeController@home');
 //Route::get('/en', 'HomeController@enghome');
 //
-//Route::get('/order', 'HomeController@index');12312312sda
+//Route::get('/order', 'HomeController@index');
 
 Route::get('/', 'AdminController@index')->name('admin');
 Route::get('/admin', 'AdminController@index')->name('admin');
