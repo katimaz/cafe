@@ -45,16 +45,16 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="control-label col-sm-2">@lang('admin.product.printer')</label>
-                    <div class="col-sm-8">
-                        <select class="form-control" id="printer_id" name="printer_id">
-                            @foreach($printers as $printer)
-                                <option value="{{$printer->id}}">{{$printer->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
+                {{--<div class="form-group">--}}
+                    {{--<label class="control-label col-sm-2">@lang('admin.product.printer')</label>--}}
+                    {{--<div class="col-sm-8">--}}
+                        {{--<select class="form-control" id="printer_id" name="printer_id">--}}
+                            {{--@foreach($printers as $printer)--}}
+                                {{--<option value="{{$printer->id}}">{{$printer->name}}</option>--}}
+                            {{--@endforeach--}}
+                        {{--</select>--}}
+                    {{--</div>--}}
+                {{--</div>--}}
                 {{--<div class="form-group">--}}
                     {{--<label class="control-label col-sm-2" for="image">@lang('admin.product.image'):</label>--}}
                     {{--<div class="col-sm-8">--}}

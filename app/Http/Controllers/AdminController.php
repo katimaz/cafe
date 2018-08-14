@@ -52,9 +52,8 @@ class AdminController extends Controller
     public function product()
     {
         $products = MenuProduct::join('menus', 'menus.id', '=', 'menu_products.menu_id')
-            ->join('printers','printers.id','=','menu_products.printer_id')
             ->where('restaurant_id',Auth::user()->restaurant_id)
-            ->select('*','menus.id as menu_id','menus.name as menu_name','menu_products.name as products_name','menu_products.id as products_id','menu_products.image_url as products_image_url','printers.name as printer_name')
+            ->select('*','menus.id as menu_id','menus.name as menu_name','menu_products.name as products_name','menu_products.id as products_id','menu_products.image_url as products_image_url')
             ->orderBy('menus.id', 'asc')
             ->get();
 
@@ -331,12 +330,13 @@ class AdminController extends Controller
 
     public function table()
     {
-        $menus = Menu::all();
+        $menus = Menu::orderBy('sequence')->get();
 
         $productMenus = DB::table('menus')
             ->join('menu_products', 'menus.id', '=', 'menu_products.menu_id')
             ->select('menu_products.*', 'menus.*','menu_products.id as product_id','menu_products.name as product_name','menu_products.image_url as product_image_url')
             ->where('active','1')
+            ->orderBy('product_name', 'asc')
             ->orderBy('menu_id', 'desc')
             ->orderBy('product_name', 'asc')
             ->get();
@@ -369,10 +369,19 @@ class AdminController extends Controller
 
         $order = new Order;
         $order->table_id = $request->table_id.'-'.$prefix;
-        $order->people = $request->people;
+        if(is_null($request->people)){
+            $order->people = 0;
+        }else{
+            $order->people = $request->people;
+        }
         $order->restaurant_id = $request->restaurant_id;
         $order->order_type_id = $request->order_type;
         $order->save();
+
+        $temp = '<CB>Sean Cafe</CB><BR><BR>';
+        $temp .= '<B>桌號 : ' . $order->table_id . '</B><BR><BR>';
+        $temp .= '<RIGHT><B>名稱     數量</B></RIGHT><BR>';
+        $temp .= '--------------------------------<BR>';
 
         foreach ($_REQUEST as $key => $value)
         {
@@ -393,17 +402,30 @@ class AdminController extends Controller
                         $sumPrice += $price;
                         $sumItems++;
 
+                        $product = MenuProduct::find($orderFood->product_id);
+
+                        $temp .= '<RIGHT><L>' . $product->name . '　　　　' . $orderFood->quantity. '</L></RIGHT><BR>';
+
                     }else{
                         dd("Active = 0 item found");
                     }
                 }
             }
         }
+        $temp .='<BR><BR><BR><BR>';
+        $printers = Printers::where('printer_type_id','=','2')->get();
+
+        foreach($printers as $printer){
+
+            $this->setPrinter($printer->account, $printer->account_key, $printer->printer_sn);
+            $this->getPrint($temp);
+        }
 
         $order->price = $sumPrice;
         $order->quantity = $sumItems;
         $order->save();
 
+        session(['success' => '己新增桌號.']);
         return redirect()->back();
     }
 
@@ -412,6 +434,11 @@ class AdminController extends Controller
         $sumItems = 0;
 
         $order = Order::where('table_id',$request->add_food_table_id)->where('paid',0)->first();
+
+        $temp = '<CB>Sean Cafe</CB><BR><BR>';
+        $temp .= '<B>桌號 : ' . $order->table_id . '</B><BR><BR>';
+        $temp .= '<RIGHT><B>名稱     數量</B></RIGHT><BR>';
+        $temp .= '--------------------------------<BR>';
 
         foreach ($_REQUEST as $key => $value)
         {
@@ -432,6 +459,9 @@ class AdminController extends Controller
                         $sumPrice += $price;
                         $sumItems +=$value;
 
+                        $product = MenuProduct::find($orderFood->product_id);
+
+                        $temp .= '<RIGHT><L>' . $product->name . '　　　　' . $orderFood->quantity. '</L></RIGHT><BR>';
                     }else{
                         dd("Active = 0 item found");
                     }
@@ -439,10 +469,20 @@ class AdminController extends Controller
             }
         }
 
+        $temp .='<BR><BR><BR><BR>';
+        $printers = Printers::where('printer_type_id','=','2')->get();
+
+        foreach($printers as $printer){
+
+            $this->setPrinter($printer->account, $printer->account_key, $printer->printer_sn);
+            $this->getPrint($temp);
+        }
+
         $order->price = $order->price+$sumPrice;
         $order->quantity = $order->quantity+$sumItems;
         $order->save();
 
+        session(['success' => '桌號'.$request->add_food_table_id.'己新增食物.']);
         return redirect()->back();
     }
 
@@ -453,13 +493,77 @@ class AdminController extends Controller
         $order->paid = 1;
         $order->save();
 
+        if($request->payment_type == 1){
+            $method = '現金';
+        }elseif($request->payment_type  == 2){
+            $method = '信用卡';
+        }else{
+            $method = '八達通';
+        }
+
+        $orderFoods  = DB::select('SELECT orders.id,order_foods.product_id,sum(order_foods.quantity) as sum_quantity,sum(order_foods.price) as sum_price,menu_products.name,menu_products.description,menu_products.image_url,orders.paid FROM `orders`,`order_foods`,menu_products 
+                   WHERE orders.id = order_foods.order_id 
+                   and order_foods.product_id = menu_products.id
+                   and orders.restaurant_id = :restaurant_id
+                   and orders.id = :id
+                   group by orders.id,order_foods.product_id', ['id' => $order->id,'restaurant_id' => 1]);
+
+        $printData = '';
+
+        if($request->payment_type == 1){
+            $printData = '<PLUGIN>';
+        }
+        $totalPrice = number_format($order->price*1.1, 2, '.', ',');
+        $ServiceCharge = $order->price*0.1;
+
+        $printData .= '<CB>Sean Cafe</CB><BR><BR>';
+        $printData .= '地址: 九龍尖沙咀漆咸道南29-31號溫莎大廈地下12號A號舖';
+        $printData .= '<BR>';
+        $printData .= '電話: 6676 9679';
+        $printData .= '<BR>';
+        $printData .= '--------------------------------<BR>';
+        $printData .= '<B>單號 : ' .$order->id.$order->table_id.'</B><BR><BR>';
+        $printData .= '<B>桌號 : ' .$order->table_id.'</B><BR><BR>';
+        $printData .= '人數 : ' .$order->people.'<BR><BR>';
+        $printData .= '日期 : ' .date('Y-m-d H:i:s').'<BR><BR>';
+        $printData .= '付款方法 : '.$method.'<BR><BR>';
+        $printData .= '<RIGHT>    　　　　　 價錢  數量 </RIGHT><BR>';
+        $printData .= '--------------------------------<BR>';
+        foreach($orderFoods as $orderFood){
+            $printData .= '<RIGHT>'.$orderFood->name . '　  ' . $orderFood->sum_price. '   ' . $orderFood->sum_quantity. '</RIGHT><BR>';
+        }
+        $printData .= '--------------------------------<BR>';
+        $printData .= '<RIGHT>小計　　　　 　             ' . $order->price. '</RIGHT><BR>';
+        $printData .= '<RIGHT>服務費　　　　 　          ' . $ServiceCharge. '</RIGHT><BR>';
+        $printData .= '--------------------------------<BR>';
+        $printData .= '<RIGHT>合計　　　　 　          ' . $totalPrice. '</RIGHT><BR>';
+        $printData .= '<BR>';
+        $printData .= '<BR>';
+        $printData .= '<BR>';
+        $printData .= '<RIGHT>Powered by QuickOrder     </RIGHT><BR>';
+        $printData .= '<RIGHT>Please Visit http://hkqos.com   </RIGHT><BR>';
+        $printData .= '<BR>';
+        $printData .= '<BR>';
+
+        $printers = Printers::where('printer_type_id','=','1')->get();
+
+        foreach($printers as $printer){
+
+            $this->setPrinter($printer->account, $printer->account_key, $printer->printer_sn);
+            $this->getPrint($printData);
+        }
+
+
+        $order->price = number_format($totalPrice, 2);
+        $order->save();
+        session(['success' => '桌號'.$request->payment_table_id.'己付款.']);
+
         return redirect()->back();
     }
 
     public function orderTableDetail(Request $request){
 
         $order = Order::where('table_id',$request->id)->where('paid',0)->first();
-
 
         $orderFoods  = DB::select('SELECT orders.id,order_foods.product_id,order_foods.id as food_id,sum(order_foods.quantity) as sum_quantity,sum(order_foods.price) as sum_price,menu_products.name,menu_products.description,menu_products.image_url,orders.paid FROM `orders`,`order_foods`,menu_products 
                    WHERE orders.id = order_foods.order_id 
@@ -472,6 +576,41 @@ class AdminController extends Controller
         array_push($newarray,$orderFoods);
         $array = array_merge($order->toArray(), $newarray);
         $json = json_encode($array);
+        return $json;
+    }
+
+    public function orderTableDelete(Request $request){
+
+        $orderFood = OrderFood::where('id',$request->id)->first();
+
+        $order = Order::where('id',$orderFood->order_id)->where('paid',0)->first();
+
+        $order->price  = $order->price - $orderFood->price;
+        $order->quantity  = $order->quantity - 1;
+        $order->save();
+
+        OrderFood::destroy($request->id);
+
+        $orderFoods  = DB::select('SELECT orders.id,order_foods.product_id,order_foods.id as food_id,sum(order_foods.quantity) as sum_quantity,sum(order_foods.price) as sum_price,menu_products.name,menu_products.description,menu_products.image_url,orders.paid FROM `orders`,`order_foods`,menu_products 
+                   WHERE orders.id = order_foods.order_id 
+                   and order_foods.product_id = menu_products.id
+                   and orders.restaurant_id = :restaurant_id
+                   and orders.id = :id
+                   group by orders.id,order_foods.product_id,order_foods.id', ['id' => $order->id,'restaurant_id' => 1]);
+
+        $newarray = [];
+        array_push($newarray,$orderFoods);
+        $array = array_merge($order->toArray(), $newarray);
+        $json = json_encode($array);
+        return $json;
+    }
+
+    public function tableStatus(Request $request){
+
+        $orders = Order::where('paid',0)->get();
+
+        $json = json_encode($orders);
+
         return $json;
     }
 }

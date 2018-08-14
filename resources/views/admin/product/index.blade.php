@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', '御滿屋')
+@section('title', 'Cafe')
 
 @section('css')
 
@@ -26,7 +26,7 @@
             <th>@lang('admin.product.name')</th>
             <th>@lang('admin.product.type')</th>
             <th>@lang('admin.product.price')</th>
-            <th>@lang('admin.product.printer')</th>
+            {{--<th>@lang('admin.product.printer')</th>--}}
             <th>@lang('admin.product.sold')</th>
             {{--<th>@lang('admin.product.image')</th>--}}
             <th></th>
@@ -38,7 +38,7 @@
                 <td>{{$product->products_name}}</td>
                 <td>{{$product->menu_name}}</td>
                 <td>{{$product->price}}</td>
-                <td>{{$product->printer_name}}</td>
+                {{--<td>{{$product->printer_name}}</td>--}}
                 @if(!$product->active)
                     <td>已售罄</td>
                 @else

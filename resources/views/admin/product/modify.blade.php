@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', '御滿屋')
+@section('title', 'Cafe')
 
 @section('css')
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
@@ -60,20 +60,20 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="control-label col-sm-2">@lang('admin.product.printer')</label>
-                    <div class="col-sm-8">
-                        <select class="form-control" id="printer_id" name="printer_id">
-                            @foreach($printers as $printer)
-                                @if($product->printer_id == $printer->id)
-                                    <option value="{{$printer->id}}" selected>{{$printer->name}}</option>
-                                @else
-                                    <option value="{{$printer->id}}">{{$printer->name}}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
+                {{--<div class="form-group">--}}
+                    {{--<label class="control-label col-sm-2">@lang('admin.product.printer')</label>--}}
+                    {{--<div class="col-sm-8">--}}
+                        {{--<select class="form-control" id="printer_id" name="printer_id">--}}
+                            {{--@foreach($printers as $printer)--}}
+                                {{--@if($product->printer_id == $printer->id)--}}
+                                    {{--<option value="{{$printer->id}}" selected>{{$printer->name}}</option>--}}
+                                {{--@else--}}
+                                    {{--<option value="{{$printer->id}}">{{$printer->name}}</option>--}}
+                                {{--@endif--}}
+                            {{--@endforeach--}}
+                        {{--</select>--}}
+                    {{--</div>--}}
+                {{--</div>--}}
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" class="btn btn-default" >@lang('admin.edit')</button>

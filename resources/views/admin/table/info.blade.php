@@ -15,8 +15,21 @@
     }
 
     .bigModel{
-        width:95%;
+        width:100%;
+        margin-bottom: 0px;
+        margin-top: 0px;
     }
+    .modal{
+        padding: 0px!important;
+    }
+    .close{
+        font-size: 50px;
+    }
+
+    input[type='radio'] {
+        transform: scale(2);
+    }
+
 </style>
 @stop
 
@@ -26,13 +39,83 @@
 
 @section('content')
 
-    <button id="12" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
-        桌號12
-    </button>
+    @if(session('success'))
+        <div class="alert alert-success alert-block" id="success-alert">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <h2>{{session('success')}}</h2>
+        </div>
+        {{session()->forget('success')}}
+    @endif
 
-    <button id="1" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
-        桌號1
-    </button>
+    <div class="row">
+        <div class="col-xs-2">
+            <button id="1" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
+                <h3>桌號1</h3>
+            </button>
+        </div>
+        <div class="col-xs-2">
+            <button id="2" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
+                <h3>桌號2</h3>
+            </button>
+        </div>
+        <div class="col-xs-2">
+            <button id="3" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
+                <h3>桌號3</h3>
+            </button>
+        </div>
+        <div class="col-xs-2">
+            <button id="4" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
+                <h3>桌號4</h3>
+            </button>
+        </div>
+        <div class="col-xs-2">
+            <button id="5" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
+                <h3>桌號5</h3>
+            </button>
+        </div>
+        <div class="col-xs-2">
+            <button id="6" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
+                <h3>桌號6</h3>
+            </button>
+        </div>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <div class="row">
+        <div class="col-xs-4"></div>
+        <div class="col-xs-8">
+            <button id="7" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
+                <h3>桌號7</h3>
+            </button>
+        </div>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <div class="row">
+        <div class="col-xs-4"></div>
+        <div class="col-xs-2">
+            <button id="8" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
+                <h3>桌號8</h3>
+            </button>
+        </div>
+        <div class="col-xs-2">
+            <button id="9" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
+                <h3>桌號9</h3>
+            </button>
+        </div>
+        <div class="col-xs-2">
+            <button id="10" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
+                <h3>桌號10</h3>
+            </button>
+        </div>
+        <div class="col-xs-2">
+            <button id="11" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
+                <h3>桌號11</h3>
+            </button>
+        </div>
+    </div>
 
     <!-- Main Table Modal -->
     <div class="modal fade" id="table" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -44,7 +127,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                     <h1 class="modal-title"></h1>
-                    <button type="button" class="btn btn-secondary pull-right" data-toggle="modal" data-target="#addTable"><h3>新增桌號</h3></button>
+                    <button type="button" class="btn btn-secondary pull-right" data-toggle="modal" data-target="#addTable"><h3>下訂單</h3></button>
                 </div>
                 <div id="main-table" class="modal-body">
                 </div>
@@ -277,6 +360,7 @@
 
 @section('js')
 
+<script src="/public/js/jquery.blockUI.js"></script>
 <script>
 
     $('.number-type').bootstrapNumber();
@@ -337,8 +421,8 @@
                         $html += ' <div class="col-sm-3"><h1>'+$json[$entry]['table_id']+'</h1></div>';
                         $html += ' <div class="col-sm-3"><h2>人數:</h2></div>';
                         $html += ' <div class="col-sm-3"><h1>'+$json[$entry]['people']+'</h1></div>';
-                        $html += ' <div class="col-sm-3"><h2>數量:</h2></div>';
-                        $html += ' <div class="col-sm-3"><h1>'+$json[$entry]['quantity']+'</h1></div>';
+//                        $html += ' <div class="col-sm-3"><h2>數量:</h2></div>';
+//                        $html += ' <div class="col-sm-3"><h1>'+$json[$entry]['quantity']+'</h1></div>';
                         $html += ' <div class="col-sm-3"><h2>金額:</h2></div>';
                         $html += ' <div class="col-sm-3"><h1>$'+$json[$entry]['price']+'</h1></div>';
 
@@ -375,9 +459,9 @@
                     $html += ' <div class="col-sm-3"><h2>桌號:</h2></div>';
                     $html += ' <div class="col-sm-3"><h1>'+$json['table_id']+'</h1></div>';
                     $html += ' <div class="col-sm-3"><h2>人數:</h2></div>';
-                    $html += ' <div class="col-sm-3"><h1>'+$json['quantity']+'</h1></div>';
-                    $html += ' <div class="col-sm-3"><h2>數量:</h2></div>';
-                    $html += ' <div class="col-sm-3"><h1>'+$json['quantity']+'</h1></div>';
+                    $html += ' <div class="col-sm-3"><h1>'+$json['people']+'</h1></div>';
+//                    $html += ' <div class="col-sm-3"><h2>數量:</h2></div>';
+//                    $html += ' <div class="col-sm-3"><h1>'+$json['quantity']+'</h1></div>';
                     $html += ' <div class="col-sm-3"><h2>金額:</h2></div>';
                     $html += ' <div class="col-sm-3"><h1>$'+$json['price']+'</h1></div>';
                     $('#detail-table').html($html);
@@ -417,9 +501,9 @@
                     $html += ' <div class="col-sm-3"><h2>桌號:</h2></div>';
                     $html += ' <div class="col-sm-3"><h1>'+$json['table_id']+'</h1></div>';
                     $html += ' <div class="col-sm-3"><h2>人數:</h2></div>';
-                    $html += ' <div class="col-sm-3"><h1>'+$json['quantity']+'</h1></div>';
-                    $html += ' <div class="col-sm-3"><h2>數量:</h2></div>';
-                    $html += ' <div class="col-sm-3"><h1>'+$json['quantity']+'</h1></div>';
+                    $html += ' <div class="col-sm-3"><h1>'+$json['people']+'</h1></div>';
+//                    $html += ' <div class="col-sm-3"><h2>數量:</h2></div>';
+//                    $html += ' <div class="col-sm-3"><h1>'+$json['quantity']+'</h1></div>';
                     $html += ' <div class="col-sm-3"><h2>金額:</h2></div>';
                     $html += ' <div class="col-sm-3"><h1>$'+$json['price']+'</h1></div>';
                     $('#payment-table').html($html);
@@ -428,14 +512,52 @@
         });
     })
 
-//    $('.deleteFood').click(function(){
-//        console.log(this.id);
-//    });
-//    $(document).ready(function () {
-//
-//    });
     $('#detail-food').on("click",'.deleteFood',function(){
-        console.log(this.id);
+        $.ajax({
+            type: 'get',
+            url: "orderTableDelete?id="+this.id,
+            success: function(result){
+                $json = JSON.parse(result);
+                if(!jQuery.isEmptyObject($json)){
+
+                    $html ='';
+                    $html += ' <div class="col-sm-3"><h2>桌號:</h2></div>';
+                    $html += ' <div class="col-sm-3"><h1>'+$json['table_id']+'</h1></div>';
+                    $html += ' <div class="col-sm-3"><h2>人數:</h2></div>';
+                    $html += ' <div class="col-sm-3"><h1>'+$json['people']+'</h1></div>';
+//                    $html += ' <div class="col-sm-3"><h2>數量:</h2></div>';
+//                    $html += ' <div class="col-sm-3"><h1>'+$json['quantity']+'</h1></div>';
+                    $html += ' <div class="col-sm-3"><h2>金額:</h2></div>';
+                    $html += ' <div class="col-sm-3"><h1>$'+$json['price']+'</h1></div>';
+                    $('#detail-table').html($html);
+
+                    $html ='';
+                    $html +'  <div class="col-sm-4"><h2>食物</h2></div>\n' +
+                    '         <div class="col-sm-4"><h2>數量</h2></div>\n' +
+                    '         <div class="col-sm-4"><h2>價錢</h2></div>';
+
+                    for ($entry in $json['0']) {
+                        $html += ' <div class="col-sm-4"><h2>'+$json['0'][$entry]['name']+'</h2></div>';
+                        $html += ' <div class="col-sm-3"><h2>'+$json['0'][$entry]['sum_quantity']+'</h2></div>';
+                        $html += ' <div class="col-sm-4"><h2>$ '+$json['0'][$entry]['sum_price']+'</h2></div>';
+                        $html += ' <div class="col-sm-1"><a href="#" class="deleteFood" id="'+$json['0'][$entry]['food_id']+'"><h2>x</h2></a></div>';
+
+                    }
+                    $('#detail-food').html($html);
+
+                    $.blockUI({
+                        theme: false,
+                        baseZ: 5000,
+                        css: {
+                            padding: '30px',
+                        },
+                        message: '<h5 style="margin: 0px"><img src="/public/image/busy.gif" /> 請稍候...</h5>'
+                    });
+
+                    setTimeout($.unblockUI, 500)
+                }
+            }
+        });
     });
 
 
@@ -451,7 +573,29 @@
                 }
             }
         });
-
     });
+
+    executeQuery();
+    setTimeout(executeQuery, 5000);
+
+    function executeQuery() {
+        $('.open-table').css('background-color', '#3c8dbc');
+        $.ajax({
+            type: 'get',
+            url: "tableStatus",
+            success: function(result){
+                $json = JSON.parse(result);
+                if(!jQuery.isEmptyObject($json)){
+                    for ($entry in $json) {
+                        $split = $json[$entry]['table_id'].split('-');
+                        var tableid = '#'+$split[0];
+                        $(tableid).css('background-color', 'red');
+                    }
+                }
+            }
+        });
+        setTimeout(executeQuery,5000); // you could choose not to continue on failure...
+    }
+
 </script>
 @stop

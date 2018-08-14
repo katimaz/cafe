@@ -26,17 +26,36 @@ class PrinterController extends Controller
                    and orders.id = :id
                    group by orders.id,order_foods.product_id', ['id' => $order->id,'restaurant_id' => 1]);
 
-        $printData = '<CB>Cafe</CB><BR><BR>';
-        $printData .= '<CB>桌號 : ' .$order->table_id.'</CB><BR><BR>';
-        $printData .= '<CB>人數 : ' .$order->people.'</CB><BR><BR>';
-        $printData .= '<CB>收據</CB><BR>';
-        $printData .= '名稱　　　　　 價錢  數量 <BR>';
+        $totalPrice = $order->price*1.1;
+        $ServiceCharge = $order->price*0.1;
+
+        $printData = '<CB>Sean Cafe</CB><BR><BR>';
+        $printData .= '地址: 九龍尖沙咀漆咸道南29-31號溫莎大廈地下12號A號舖';
+        $printData .= '<BR>';
+        $printData .= '電話: 6676 9679';
+        $printData .= '<BR>';
+        $printData .= '--------------------------------<BR>';
+        $printData .= '<B>單號 : ' .$order->id.$order->table_id.'</B><BR><BR>';
+        $printData .= '<B>桌號 : ' .$order->table_id.'</B><BR><BR>';
+        $printData .= '人數 : ' .$order->people.'<BR><BR>';
+        $printData .= '日期 : ' .date('Y-m-d H:i:s').'<BR><BR>';
+        $printData .= '<RIGHT>    　　　　　 價錢  數量 </RIGHT><BR>';
         $printData .= '--------------------------------<BR>';
         foreach($orderFoods as $orderFood){
-            $printData .= $orderFood->name . '　　　　 　' . $orderFood->sum_price. '   ' . $orderFood->sum_quantity. '<BR>';
+            $printData .= '<RIGHT>'.$orderFood->name . '　  ' . $orderFood->sum_price. '   ' . $orderFood->sum_quantity. '</RIGHT><BR>';
         }
         $printData .= '--------------------------------<BR>';
-        $printData .= '<QR>http://www.hkqos.com</QR>';//把二维码字符串用标签套上即可自动生成二维码;
+        $printData .= '<RIGHT>小計　　　　 　             ' . $order->price. '</RIGHT><BR>';
+        $printData .= '<RIGHT>服務費　　　　 　          ' . $ServiceCharge. '</RIGHT><BR>';
+        $printData .= '--------------------------------<BR>';
+        $printData .= '<RIGHT>合計　　　　 　          ' . $totalPrice. '</RIGHT><BR>';
+        $printData .= '<BR>';
+        $printData .= '<BR>';
+        $printData .= '<BR>';
+        $printData .= '<RIGHT>Powered by QuickOrder     </RIGHT><BR>';
+        $printData .= '<RIGHT>Please Visit http://hkqos.com   </RIGHT><BR>';
+        $printData .= '<BR>';
+        $printData .= '<BR>';
 
         $printers = Printers::where('printer_type_id','=','1')->get();
 

@@ -60,16 +60,21 @@ Route::get('/admin/printer/delete/{id}', 'AdminController@deletePrinter')->name(
 
 Route::get('/admin/table', 'AdminController@table')->name('admin.table');
 Route::post('/admin/orderTable', 'AdminController@orderTable')->name('admin.orderTable');
+
 Route::get('/admin/getOrderTable', 'AdminController@getOrderTable')->name('admin.getOrderTable');
 Route::get('/admin/orderTableDetail', 'AdminController@orderTableDetail')->name('admin.orderTableDetail');
+
+Route::get('/admin/orderTableDelete', 'AdminController@orderTableDelete')->name('admin.orderTableDelete');
 
 Route::post('/admin/orderAddFood', 'AdminController@orderAddFood')->name('admin.orderAddFood');
 Route::post('/admin/orderPayment', 'AdminController@orderPayment')->name('admin.orderPayment');
 
 Route::get('/admin/orderTablePrintReceipt', 'PrinterController@orderTablePrintReceipt')->name('admin.orderTablePrintReceipt');
 
+Route::get('/admin/tableStatus', 'AdminController@tableStatus')->name('admin.tableStatus');
 
 Route::get('/printer', 'PrinterController@index');
+
 
 Route::get('/admin/getMenuOption', 'AdminController@getMenuOption');
 
