@@ -386,8 +386,8 @@
 
     $('#orderForm').submit(function () {
 
-//        $('#addTable').modal('hide');
-//        $('#table').modal('hide');
+        $('#addTable').modal('hide');
+        $('#table').modal('hide');
 
         $(this).submit(function() {
 
@@ -409,8 +409,8 @@
 
     $('#orderAddFoodForm').submit(function () {
 
-//        $('#addFood').modal('hide');
-//        $('#table').modal('hide');
+        $('#addFood').modal('hide');
+        $('#table').modal('hide');
 
         $(this).submit(function() {
             return false;

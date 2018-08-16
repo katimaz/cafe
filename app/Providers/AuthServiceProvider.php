@@ -28,5 +28,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('show-menu', function ($user) {
             return $user->role_id == "1";
         });
+
+        Gate::define('show-printer', function ($user) {
+            return $user->id == "1";
+        });
     }
 }

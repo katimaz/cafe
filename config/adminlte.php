@@ -173,7 +173,7 @@ return [
             'icon'        => 'print',
 //            'label'       => 4,
             'label_color' => 'success',
-            'can'  => 'show-menu',
+            'can'  => 'show-printer',
         ],
         [
             'text'        => '管理',
