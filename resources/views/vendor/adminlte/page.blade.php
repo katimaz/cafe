@@ -38,13 +38,22 @@
                     </div>
                     <!-- /.navbar-collapse -->
             @else
-            <!-- Logo -->
-            <a href="{{ url(config('adminlte.dashboard_url', 'home')) }}" class="logo">
-                <!-- mini logo for sidebar mini 50x50 pixels -->
-                <span class="logo-mini">{!! config('adminlte.logo_mini', '<b>A</b>LT') !!}</span>
-                <!-- logo for regular state and mobile devices -->
-                <span class="logo-lg">{!! config('adminlte.logo', '<b>Admin</b>LTE') !!}</span>
-            </a>
+                <!-- Logo -->
+             @if(auth::user()->role_id ==2)
+                 <a href="{{ url('admin/table') }}" class="logo">
+                     <!-- mini logo for sidebar mini 50x50 pixels -->
+                     <span class="logo-mini">{!! config('adminlte.logo_mini', '<b>A</b>LT') !!}</span>
+                     <!-- logo for regular state and mobile devices -->
+                     <span class="logo-lg">{!! config('adminlte.logo', '<b>Admin</b>LTE') !!}</span>
+                 </a>
+             @else
+                 <a href="{{ url(config('adminlte.dashboard_url', 'home')) }}" class="logo">
+                     <!-- mini logo for sidebar mini 50x50 pixels -->
+                     <span class="logo-mini">{!! config('adminlte.logo_mini', '<b>A</b>LT') !!}</span>
+                     <!-- logo for regular state and mobile devices -->
+                     <span class="logo-lg">{!! config('adminlte.logo', '<b>Admin</b>LTE') !!}</span>
+                 </a>
+             @endif
 
             <!-- Header Navbar -->
             <nav class="navbar navbar-static-top" role="navigation">

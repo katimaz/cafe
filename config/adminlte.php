@@ -115,6 +115,14 @@ return [
             'model'=> 'blog',
         ],
         [
+            'text'        => '使用者',
+            'url'         => 'admin/users',
+            'icon'        => 'users',
+//            'label'       => 4,
+            'label_color' => 'success',
+            'can'  => 'show-menu',
+        ],
+        [
             'text'        => '菜單',
             'url'         => 'admin/menu',
             'icon'        => 'file',
@@ -136,6 +144,7 @@ return [
             'icon'        => 'clipboard',
 //            'label'       => 4,
             'label_color' => 'success',
+            'can'  => 'show-menu',
         ],
 //        [
 //            'text'        => 'Key',

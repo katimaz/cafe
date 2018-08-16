@@ -17,6 +17,8 @@ use Image;
 use DB;
 use Auth;
 use Carbon\Carbon;
+use Excel;
+use Illuminate\Support\Facades\Hash;
 
 header('Content-Type: text/html; charset=utf-8');
 
@@ -136,6 +138,73 @@ class AdminController extends Controller
 
         session(['success' => '資料已修改.']);
         return redirect()->back();
+    }
+
+    public function addUser()
+    {
+        return view('admin.users.add');
+    }
+
+    public function users()
+    {
+
+        $users = User::where('role_id','=','2')->get();
+
+        return view('admin.users.index',compact('users'));
+    }
+
+    public function modifyUser($id)
+    {
+        $user = User::find($id);
+
+        return view('admin.users.modify',compact('user'));
+    }
+
+    public function deleteUser($id)
+    {
+        User::destroy($id);
+
+        session(['success' => '使用者已刪除.']);
+
+        return redirect('admin/users');
+    }
+
+    public function updateUser(Request $request , $id)
+    {
+
+        $user = User::find($id);
+
+        $user->name = $request->name;
+
+        if(!is_null($request->password)){
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+        session(['success' => '使用者已修改.']);
+        return redirect()->back();
+    }
+
+    public function createUser(Request $request)
+    {
+        $check = User::where('email',$request->name)->count();
+
+        if($check == 0){
+            $user = new User;
+            $user->name = $request->name;
+            $user->email = $request->name;
+            $user->role_id = $request->role_id;
+            $user->password =  Hash::make($request->password);
+
+            $user->restaurant_id = Auth::user()->restaurant_id;
+
+            $user->save();
+            session(['success' => '使用者已新增.']);
+        }else{
+            session(['danger' => '重複使用者名稱.']);
+            return redirect()->back();
+        }
+        return redirect('admin/users');
     }
 
     public function addMenu()
@@ -336,9 +405,8 @@ class AdminController extends Controller
             ->join('menu_products', 'menus.id', '=', 'menu_products.menu_id')
             ->select('menu_products.*', 'menus.*','menu_products.id as product_id','menu_products.name as product_name','menu_products.image_url as product_image_url')
             ->where('active','1')
-            ->orderBy('product_name', 'asc')
             ->orderBy('menu_id', 'desc')
-            ->orderBy('product_name', 'asc')
+            ->orderBy('menu_products.sequence', 'asc')
             ->get();
 
         return view('admin.table.info',compact('menus','productMenus'));
@@ -404,22 +472,27 @@ class AdminController extends Controller
 
                         $product = MenuProduct::find($orderFood->product_id);
 
-                        $temp .= '<RIGHT><L>' . $product->name . '　　　　' . $orderFood->quantity. '</L></RIGHT><BR>';
+                        $temp = '<B>桌號 : ' . $order->table_id . '</B><BR><BR>';
+                        $temp .= '日期 : ' .date('Y-m-d H:i:s').'<BR><BR>';
+                        $temp .= '<RIGHT><B>名稱     數量</B></RIGHT><BR>';
+                        $temp .= '--------------------------------<BR>';
+                        $temp .= '<RIGHT><B>' . $product->name . '　　　　' . $orderFood->quantity. '</B></RIGHT><BR>';
+                        $temp .= '--------------------------------<BR>';
+                        $temp .='<BR><BR>';
+                        $printers = Printers::where('printer_type_id','=','2')->get();
 
+                        foreach($printers as $printer){
+
+                            $this->setPrinter($printer->account, $printer->account_key, $printer->printer_sn);
+                            $this->getPrint($temp);
+                        }
                     }else{
                         dd("Active = 0 item found");
                     }
                 }
             }
         }
-        $temp .='<BR><BR><BR><BR>';
-        $printers = Printers::where('printer_type_id','=','2')->get();
 
-        foreach($printers as $printer){
-
-            $this->setPrinter($printer->account, $printer->account_key, $printer->printer_sn);
-            $this->getPrint($temp);
-        }
 
         $order->price = $sumPrice;
         $order->quantity = $sumItems;
@@ -435,129 +508,138 @@ class AdminController extends Controller
 
         $order = Order::where('table_id',$request->add_food_table_id)->where('paid',0)->first();
 
-        $temp = '<CB>Sean Cafe</CB><BR><BR>';
-        $temp .= '<B>桌號 : ' . $order->table_id . '</B><BR><BR>';
-        $temp .= '<RIGHT><B>名稱     數量</B></RIGHT><BR>';
-        $temp .= '--------------------------------<BR>';
+        if(!is_null($order)) {
 
-        foreach ($_REQUEST as $key => $value)
-        {
-            if(is_int($key)){
-                if($value != '0'){
-                    $menuProduct = MenuProduct::where('id',$key)->where('active',1)->first();
+            foreach ($_REQUEST as $key => $value) {
+                if (is_int($key)) {
+                    if ($value != '0') {
+                        $menuProduct = MenuProduct::where('id', $key)->where('active', 1)->first();
 
-                    if(count($menuProduct)){
-                        $price = $menuProduct->price * $value;
+                        if (count($menuProduct)) {
+                            $price = $menuProduct->price * $value;
 
-                        $orderFood = new OrderFood;
-                        $orderFood->order_id = $order->id;
-                        $orderFood->product_id = $key;
-                        $orderFood->quantity = $value;
-                        $orderFood->price = $price;
-                        $orderFood->save();
+                            $orderFood = new OrderFood;
+                            $orderFood->order_id = $order->id;
+                            $orderFood->product_id = $key;
+                            $orderFood->quantity = $value;
+                            $orderFood->price = $price;
+                            $orderFood->save();
 
-                        $sumPrice += $price;
-                        $sumItems +=$value;
+                            $sumPrice += $price;
+                            $sumItems += $value;
 
-                        $product = MenuProduct::find($orderFood->product_id);
+                            $product = MenuProduct::find($orderFood->product_id);
 
-                        $temp .= '<RIGHT><L>' . $product->name . '　　　　' . $orderFood->quantity. '</L></RIGHT><BR>';
-                    }else{
-                        dd("Active = 0 item found");
+                            $temp = '<B>桌號 : ' . $order->table_id . '</B><BR><BR>';
+                            $temp .= '日期 : ' . date('Y-m-d H:i:s') . '<BR><BR>';
+                            $temp .= '<RIGHT><B>名稱     數量</B></RIGHT><BR>';
+                            $temp .= '--------------------------------<BR>';
+                            $temp .= '<RIGHT><B>' . $product->name . '　　　　' . $orderFood->quantity . '</B></RIGHT><BR>';
+                            $temp .= '--------------------------------<BR>';
+                            $temp .= '<BR><BR>';
+                            $printers = Printers::where('printer_type_id', '=', '2')->get();
+
+                            foreach ($printers as $printer) {
+
+                                $this->setPrinter($printer->account, $printer->account_key, $printer->printer_sn);
+                                $this->getPrint($temp);
+                            }
+                        } else {
+                            dd("Active = 0 item found");
+                        }
                     }
                 }
             }
+
+            $order->price = $order->price + $sumPrice;
+            $order->quantity = $order->quantity + $sumItems;
+            $order->save();
+
+            session(['success' => '桌號' . $request->add_food_table_id . '己新增食物.']);
         }
-
-        $temp .='<BR><BR><BR><BR>';
-        $printers = Printers::where('printer_type_id','=','2')->get();
-
-        foreach($printers as $printer){
-
-            $this->setPrinter($printer->account, $printer->account_key, $printer->printer_sn);
-            $this->getPrint($temp);
-        }
-
-        $order->price = $order->price+$sumPrice;
-        $order->quantity = $order->quantity+$sumItems;
-        $order->save();
-
-        session(['success' => '桌號'.$request->add_food_table_id.'己新增食物.']);
         return redirect()->back();
     }
 
     public function orderPayment(Request $request){
 
         $order = Order::where('table_id',$request->payment_table_id)->where('paid',0)->first();
-        $order->payment_type = $request->payment_type;
-        $order->paid = 1;
-        $order->save();
 
-        if($request->payment_type == 1){
-            $method = '現金';
-        }elseif($request->payment_type  == 2){
-            $method = '信用卡';
-        }else{
-            $method = '八達通';
+        if(!is_null($order)){
+
+            if($request->payment_type == 1){
+                $method = '現金';
+            }elseif($request->payment_type  == 2){
+                $method = '信用卡';
+            }else{
+                $method = '八達通';
+            }
+
+            $orderFoods  = DB::select('SELECT orders.id,order_foods.product_id,sum(order_foods.quantity) as sum_quantity,sum(order_foods.price) as sum_price,menu_products.name,menu_products.description,menu_products.image_url,orders.paid FROM `orders`,`order_foods`,menu_products 
+                       WHERE orders.id = order_foods.order_id 
+                       and order_foods.product_id = menu_products.id
+                       and orders.restaurant_id = :restaurant_id
+                       and orders.id = :id
+                       group by orders.id,order_foods.product_id', ['id' => $order->id,'restaurant_id' => 1]);
+
+            $printData = '';
+
+
+            $totalPrice = number_format($order->price*1.1, 1, '.', ',');
+            $ServiceCharge = $order->price*0.1;
+
+            $printData .= '<CB>Sean Cafe</CB><BR><BR>';
+            $printData .= '地址: 九龍尖沙咀漆咸道南29-31號溫莎大廈地下12號A號舖';
+            $printData .= '<BR>';
+            $printData .= '電話: 6676 9679';
+            $printData .= '<BR>';
+            $printData .= '--------------------------------<BR>';
+            $printData .= '<B>單號 : ' .$order->id.$order->table_id.'</B><BR><BR>';
+            $printData .= '<B>桌號 : ' .$order->table_id.'</B><BR><BR>';
+            $printData .= '人數 : ' .$order->people.'<BR><BR>';
+            $printData .= '日期 : ' .date('Y-m-d H:i:s').'<BR><BR>';
+            $printData .= '付款方法 : '.$method.'<BR><BR>';
+            $printData .= '<RIGHT>    　　　　　 數量  價錢 </RIGHT><BR>';
+            $printData .= '--------------------------------<BR>';
+            foreach($orderFoods as $orderFood){
+                $priceSpace ='';
+                if(strlen($orderFood->sum_price)==2){
+                    $priceSpace =' ';
+                }elseif(strlen($orderFood->sum_price)==1){
+                    $priceSpace ='  ';
+                }
+
+                $printData .= '<RIGHT><BOLD><L>'.$orderFood->name.'　 '. $orderFood->sum_quantity.'  '.$priceSpace.'$'.$orderFood->sum_price.'</L></BOLD></RIGHT><BR>';
+            }
+            $printData .= '--------------------------------<BR>';
+            $printData .= '<RIGHT>小計　　　　 　           $' . $order->price. '</RIGHT><BR>';
+            $printData .= '<RIGHT>服務費　　　　 　        $' . $ServiceCharge. '</RIGHT><BR>';
+            $printData .= '--------------------------------<BR>';
+            //$printData .= '<RIGHT><B>合計　　　$' . $totalPrice. '</B></RIGHT><BR>';
+            $printData .= '<RIGHT><B>合計　　$' . $totalPrice. '</B></RIGHT><BR>';
+            $printData .= '<BR>';
+            $printData .= '<BR>';
+            $printData .= '<BR>';
+            $printData .= '<RIGHT>Powered by QuickOrder     </RIGHT><BR>';
+            $printData .= '<RIGHT>Please Visit http://hkqos.com   </RIGHT><BR>';
+            $printData .= '<BR>';
+            $printData .= '<BR>';
+            if($request->payment_type == 1){
+                $printData .= '<PLUGIN>';
+            }
+
+            $printers = Printers::where('printer_type_id','=','1')->get();
+
+            foreach($printers as $printer){
+                $this->setPrinter($printer->account, $printer->account_key, $printer->printer_sn);
+                $this->getPrint($printData);
+            }
+
+            $order->payment_type = $request->payment_type;
+            $order->paid = 1;
+            $order->price = $order->price*1.1;
+            $order->save();
+            session(['success' => '桌號'.$request->payment_table_id.'己付款.']);
         }
-
-        $orderFoods  = DB::select('SELECT orders.id,order_foods.product_id,sum(order_foods.quantity) as sum_quantity,sum(order_foods.price) as sum_price,menu_products.name,menu_products.description,menu_products.image_url,orders.paid FROM `orders`,`order_foods`,menu_products 
-                   WHERE orders.id = order_foods.order_id 
-                   and order_foods.product_id = menu_products.id
-                   and orders.restaurant_id = :restaurant_id
-                   and orders.id = :id
-                   group by orders.id,order_foods.product_id', ['id' => $order->id,'restaurant_id' => 1]);
-
-        $printData = '';
-
-        if($request->payment_type == 1){
-            $printData = '<PLUGIN>';
-        }
-        $totalPrice = number_format($order->price*1.1, 2, '.', ',');
-        $ServiceCharge = $order->price*0.1;
-
-        $printData .= '<CB>Sean Cafe</CB><BR><BR>';
-        $printData .= '地址: 九龍尖沙咀漆咸道南29-31號溫莎大廈地下12號A號舖';
-        $printData .= '<BR>';
-        $printData .= '電話: 6676 9679';
-        $printData .= '<BR>';
-        $printData .= '--------------------------------<BR>';
-        $printData .= '<B>單號 : ' .$order->id.$order->table_id.'</B><BR><BR>';
-        $printData .= '<B>桌號 : ' .$order->table_id.'</B><BR><BR>';
-        $printData .= '人數 : ' .$order->people.'<BR><BR>';
-        $printData .= '日期 : ' .date('Y-m-d H:i:s').'<BR><BR>';
-        $printData .= '付款方法 : '.$method.'<BR><BR>';
-        $printData .= '<RIGHT>    　　　　　 價錢  數量 </RIGHT><BR>';
-        $printData .= '--------------------------------<BR>';
-        foreach($orderFoods as $orderFood){
-            $printData .= '<RIGHT>'.$orderFood->name . '　  ' . $orderFood->sum_price. '   ' . $orderFood->sum_quantity. '</RIGHT><BR>';
-        }
-        $printData .= '--------------------------------<BR>';
-        $printData .= '<RIGHT>小計　　　　 　             ' . $order->price. '</RIGHT><BR>';
-        $printData .= '<RIGHT>服務費　　　　 　          ' . $ServiceCharge. '</RIGHT><BR>';
-        $printData .= '--------------------------------<BR>';
-        $printData .= '<RIGHT>合計　　　　 　          ' . $totalPrice. '</RIGHT><BR>';
-        $printData .= '<BR>';
-        $printData .= '<BR>';
-        $printData .= '<BR>';
-        $printData .= '<RIGHT>Powered by QuickOrder     </RIGHT><BR>';
-        $printData .= '<RIGHT>Please Visit http://hkqos.com   </RIGHT><BR>';
-        $printData .= '<BR>';
-        $printData .= '<BR>';
-
-        $printers = Printers::where('printer_type_id','=','1')->get();
-
-        foreach($printers as $printer){
-
-            $this->setPrinter($printer->account, $printer->account_key, $printer->printer_sn);
-            $this->getPrint($printData);
-        }
-
-
-        $order->price = number_format($totalPrice, 2);
-        $order->save();
-        session(['success' => '桌號'.$request->payment_table_id.'己付款.']);
-
         return redirect()->back();
     }
 
@@ -612,5 +694,23 @@ class AdminController extends Controller
         $json = json_encode($orders);
 
         return $json;
+    }
+
+    public function downloadExcel()
+    {
+        $data = DB::select('SELECT CONCAT(id,table_id) as 訂單, table_id as 桌號, price as 價錢 ,people as 人數 ,case when payment_type = 1 then "現金" when payment_type = 2 then "信用卡"  when payment_type = 3 then "八達通" else "" end as 付款方法, updated_at as 付款時間 from orders where paid = 1');
+
+        $data = array_map(function ($data) {
+            return (array)$data;
+        }, $data);
+
+        $dt = Carbon::now();
+
+        return Excel::create($dt->toDateString().'訂單', function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data)
+            {
+                $sheet->fromArray($data);
+            });
+        })->download('xlsx');
     }
 }

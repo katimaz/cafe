@@ -22,6 +22,7 @@ return [
     'key' => '密碼',
     'order' => '訂單',
     'printer' => '影印機',
+    'users' => '使用者',
     'menu.name'=> '名稱',
 
     'printer.name' =>'名稱',
@@ -51,6 +52,10 @@ return [
     'product.sold' =>'停止銷售',
     'product.image' =>'圖片',
     'product.printer' =>'影印機',
+
+    'users.name' =>'帳號',
+    'users.password' =>'密碼',
+
 
 
 ];

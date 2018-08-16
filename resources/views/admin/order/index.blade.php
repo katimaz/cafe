@@ -11,10 +11,13 @@
 @stop
 
 @section('content')
+    <a href="{{url('admin/downloadExcel')}}" class="btn btn-info pull-right">匯出EXCEL</a>
+    <br/>
     <table class="table table-striped table-bordered" id="order-table">
         <thead>
         <tr>
             <th>@lang('admin.order.createdtime')</th>
+            <th>@lang('admin.order.orderid')</th>
             <th>@lang('admin.order.tableid')</th>
             <th>@lang('admin.order.quantity')</th>
             <th>@lang('admin.order.people')</th>
@@ -27,6 +30,7 @@
         @foreach($orders as $order)
             <tr>
                 <td>{{$order->created_at}}</td>
+                <td>{{$order->id.$order->table_id}}</td>
                 <td>{{$order->table_id}}</td>
                 <td>{{$order->quantity}}</td>
                 <td>{{$order->people}}</td>

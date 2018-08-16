@@ -58,6 +58,13 @@ Route::get('/admin/printer/delete/{id}', 'AdminController@deletePrinter')->name(
 //Route::post('/admin/promotion/create', 'PromotionController@createPromotion')->name('admin.promotion.create');
 //Route::get('/admin/promotion/delete/{id}', 'PromotionController@deletePromotion')->name('admin.promotion.deleteProduct');
 
+Route::get('/admin/user/add', 'AdminController@addUser')->name('admin.user.add');
+Route::get('/admin/users', 'AdminController@users')->name('admin.users');
+Route::get('/admin/user/modify/{id}', 'AdminController@modifyUser')->name('admin.user.modify');
+Route::post('/admin/user/modify/{id}', 'AdminController@updateUser')->name('admin.user.updateUser');
+Route::post('/admin/user/create', 'AdminController@createUser')->name('admin.user.create');
+Route::get('/admin/user/delete/{id}', 'AdminController@deleteUser')->name('admin.user.deleteUser');
+
 Route::get('/admin/table', 'AdminController@table')->name('admin.table');
 Route::post('/admin/orderTable', 'AdminController@orderTable')->name('admin.orderTable');
 
@@ -72,6 +79,8 @@ Route::post('/admin/orderPayment', 'AdminController@orderPayment')->name('admin.
 Route::get('/admin/orderTablePrintReceipt', 'PrinterController@orderTablePrintReceipt')->name('admin.orderTablePrintReceipt');
 
 Route::get('/admin/tableStatus', 'AdminController@tableStatus')->name('admin.tableStatus');
+
+Route::get('/admin/downloadExcel', 'AdminController@downloadExcel')->name('admin.downloadExcel');
 
 Route::get('/printer', 'PrinterController@index');
 

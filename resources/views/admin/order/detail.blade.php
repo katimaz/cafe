@@ -70,11 +70,11 @@
                 <a class="list-group-item list-group-item-action">
                     <div class="row">
                         <div class="col-xs-6">
-                            <h1><strong>Total:</strong></h1>
+                            <h1><strong>合計:</strong></h1>
                         </div>
                         <div class="col-xs-6">
-                            <h2>Quantity : {{$order->quantity}}</h2>
-                            <h2>Price : $ {{$order->price}}</h2>
+                            {{--<h2>Quantity : {{$order->quantity}}</h2>--}}
+                            <h2>${{$order->price}}</h2>
                         </div>
                     </div>
                 </a>
@@ -85,8 +85,8 @@
                                 <h1><strong>{{$orderFood->name}}</strong></h1>
                             </div>
                             <div class="col-xs-6">
-                                <h2>Quantity : {{$orderFood->sum_quantity}}</h2>
-                                <h2>Price : $ {{$orderFood->sum_price}}</h2>
+                                <h2>數量 : {{$orderFood->sum_quantity}}</h2>
+                                <h2>價錢 : ${{$orderFood->sum_price}}</h2>
                             </div>
                         </div>
                     </a>

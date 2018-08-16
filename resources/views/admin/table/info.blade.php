@@ -30,6 +30,11 @@
         transform: scale(2);
     }
 
+    .input-group-btn{
+        transform: scale(1.5);
+        margin-right: 4px;
+        margin-left: 5px;
+    }
 </style>
 @stop
 
@@ -116,7 +121,21 @@
             </button>
         </div>
     </div>
-
+    <br/>
+    <br/>
+    <br/>
+    <div class="row">
+        <div class="col-xs-2">
+            <button id="外賣1" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
+                <h3>外賣1</h3>
+            </button>
+        </div>
+        <div class="col-xs-2">
+            <button id="外賣2" type="button" class="btn btn-primary open-table" data-toggle="modal" data-target="#table">
+                <h3>外賣2</h3>
+            </button>
+        </div>
+    </div>
     <!-- Main Table Modal -->
     <div class="modal fade" id="table" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered bigModel" role="document">
@@ -240,7 +259,7 @@
                         <div class="container-fluid">
                             <ul class="nav nav-pills nav-justified">
                                 @foreach($menus as $menu)
-                                    @if($menu->name =="小食")
+                                    @if($menu->name =="套餐")
                                         <li class="active"><a style="font-size: 32px;" data-toggle="pill" href="#{{$menu->name}}">{{$menu->name}}</a></li>
                                     @elseif($menu->name =="貝果/牛角包")
                                         <li><a style="font-size: 32px;" data-toggle="pill" href="#貝果牛角包">{{$menu->name}}</a></li>
@@ -252,7 +271,7 @@
 
                             <div class="tab-content">
                                 @foreach($menus as $menu)
-                                    @if($menu->name =="小食")
+                                    @if($menu->name =="套餐")
                                         <div id="{{$menu->name}}" class="tab-pane fade in active">
                                     @elseif($menu->name =="貝果/牛角包")
                                         <div id="貝果牛角包" class="tab-pane fade">
@@ -268,10 +287,10 @@
                                                             <h2 class="control-label pull-left">{{$productMenu->product_name}}</h2>
                                                         </div>
                                                         <div class="col-xs-12 col-md-3">
-                                                            <h2 class="control-label">${{$productMenu->price}}</h2>
+                                                            <h3 class="control-label">${{$productMenu->price}}</h3>
                                                         </div>
                                                     </div>
-                                                    <input name="{{$productMenu->product_id}}" style="font-size: 34px" class="form-control number-type" type="number" value="0" min="0" max="20" readonly/>
+                                                    <input name="{{$productMenu->product_id}}" style="font-size: 34px;height: 50px;" class="form-control number-type" type="number" value="0" min="0" max="20" readonly/>
                                                 </div>
                                                 @endif
                                             @endforeach
@@ -308,7 +327,7 @@
                         <div class="container-fluid">
                             <ul class="nav nav-pills nav-justified">
                                 @foreach($menus as $menu)
-                                    @if($menu->name =="小食")
+                                    @if($menu->name =="套餐")
                                         <li class="active"><a style="font-size: 32px;" data-toggle="pill" href="#{{$menu->name}}">{{$menu->name}}</a></li>
                                     @elseif($menu->name =="貝果/牛角包")
                                         <li><a style="font-size: 32px;" data-toggle="pill" href="#貝果牛角包">{{$menu->name}}</a></li>
@@ -320,37 +339,37 @@
 
                             <div class="tab-content">
                                 @foreach($menus as $menu)
-                                    @if($menu->name =="小食")
+                                    @if($menu->name =="套餐")
                                         <div id="{{$menu->name}}" class="tab-pane fade in active">
-                                    @elseif($menu->name =="貝果/牛角包")
-                                        <div id="貝果牛角包" class="tab-pane fade">
-                                    @else
-                                        <div id="{{$menu->name}}" class="tab-pane fade">
-                                    @endif
-                                            <div class="row">
-                                                @foreach($productMenus as $productMenu)
-                                                    @if($productMenu->menu_id == $menu->id)
-                                                        <div class="col-sm-4">
+                                            @elseif($menu->name =="貝果/牛角包")
+                                                <div id="貝果牛角包" class="tab-pane fade">
+                                                    @else
+                                                        <div id="{{$menu->name}}" class="tab-pane fade">
+                                                            @endif
                                                             <div class="row">
-                                                                <div class="col-xs-12 col-md-9">
-                                                                    <h2 class="control-label">{{$productMenu->product_name}}</h2>
-                                                                </div>
-                                                                <div class="col-xs-12 col-md-3">
-                                                                    <h2 class="control-label">${{$productMenu->price}}</h2>
-                                                                </div>
+                                                                @foreach($productMenus as $productMenu)
+                                                                    @if($productMenu->menu_id == $menu->id)
+                                                                        <div class="col-sm-4">
+                                                                            <div class="row">
+                                                                                <div class="col-xs-12 col-md-9">
+                                                                                    <h2 class="control-label pull-left">{{$productMenu->product_name}}</h2>
+                                                                                </div>
+                                                                                <div class="col-xs-12 col-md-3">
+                                                                                    <h3 class="control-label">${{$productMenu->price}}</h3>
+                                                                                </div>
+                                                                            </div>
+                                                                            <input name="{{$productMenu->product_id}}" style="font-size: 34px;height: 50px;" class="form-control number-type" type="number" value="0" min="0" max="20" readonly/>
+                                                                        </div>
+                                                                    @endif
+                                                                @endforeach
                                                             </div>
-                                                        <input name="{{$productMenu->product_id}}" style="font-size: 34px" class="form-control number-type" type="number" value="0" min="0" max="20" readonly />
                                                         </div>
-                                                    @endif
-                                                @endforeach
-                                            </div>
+                                                        @endforeach
+                                                </div>
                                         </div>
-                                @endforeach
+                                        <div class="modal-footer">
+                                            <input style="font-size: 24px" type="submit" class="btn btn-secondary pull-right" value="確認"/>
                                         </div>
-                                        </div>
-                                    <div class="modal-footer">
-                                        <input style="font-size: 24px" type="submit" class="btn btn-secondary pull-right" value="確認"/>
-                                    </div>
                             </div>
                 </form>
             </div>
@@ -366,6 +385,33 @@
     $('.number-type').bootstrapNumber();
 
     $('#orderForm').submit(function () {
+
+//        $('#addTable').modal('hide');
+//        $('#table').modal('hide');
+
+        $(this).submit(function() {
+
+            return false;
+        });
+
+        var value = $('.number-type').filter(function () {
+            return this.value > '0';
+        });
+
+        if (value.length == 0) {
+            alert('請輸入數量!!');
+            return false;
+        }
+
+
+        return true;
+    });
+
+    $('#orderAddFoodForm').submit(function () {
+
+//        $('#addFood').modal('hide');
+//        $('#table').modal('hide');
+
         $(this).submit(function() {
             return false;
         });
@@ -382,20 +428,11 @@
         return true;
     });
 
-    $('#orderAddFoodForm').submit(function () {
+    $('#paymentForm').submit(function () {
 
         $(this).submit(function() {
             return false;
         });
-
-        var value = $('.number-type').filter(function () {
-            return this.value > '0';
-        });
-
-        if (value.length == 0) {
-            alert('請輸入數量!!');
-            return false;
-        }
 
         return true;
     });
@@ -475,7 +512,7 @@
                         $html += ' <div class="col-sm-4"><h2>'+$json['0'][$entry]['name']+'</h2></div>';
                         $html += ' <div class="col-sm-3"><h2>'+$json['0'][$entry]['sum_quantity']+'</h2></div>';
                         $html += ' <div class="col-sm-4"><h2>$ '+$json['0'][$entry]['sum_price']+'</h2></div>';
-                        $html += ' <div class="col-sm-1"><a href="#" class="deleteFood" id="'+$json['0'][$entry]['food_id']+'"><h2>x</h2></a></div>';
+                        $html += ' <div class="col-sm-1"><a href="#" class="deleteFood" id="'+$json['0'][$entry]['food_id']+'"><h1 style="font-size: 42px">x</h1></a></div>';
 
                     }
                     $('#detail-food').html($html);
@@ -540,7 +577,7 @@
                         $html += ' <div class="col-sm-4"><h2>'+$json['0'][$entry]['name']+'</h2></div>';
                         $html += ' <div class="col-sm-3"><h2>'+$json['0'][$entry]['sum_quantity']+'</h2></div>';
                         $html += ' <div class="col-sm-4"><h2>$ '+$json['0'][$entry]['sum_price']+'</h2></div>';
-                        $html += ' <div class="col-sm-1"><a href="#" class="deleteFood" id="'+$json['0'][$entry]['food_id']+'"><h2>x</h2></a></div>';
+                        $html += ' <div class="col-sm-1"><a href="#" class="deleteFood" id="'+$json['0'][$entry]['food_id']+'"><h1 style="font-size: 42px">x</h1></a></div>';
 
                     }
                     $('#detail-food').html($html);
@@ -597,5 +634,8 @@
         setTimeout(executeQuery,5000); // you could choose not to continue on failure...
     }
 
+    setTimeout(function() {
+        $("#success-alert").alert('close');
+    }, 2000);
 </script>
 @stop

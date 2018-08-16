@@ -17,6 +17,7 @@ class PrinterController extends Controller
 
     public function orderTablePrintReceipt(Request $request){
 
+
         $order = Order::where('table_id',$request->table_id)->where('paid',0)->first();
 
         $orderFoods  = DB::select('SELECT orders.id,order_foods.product_id,sum(order_foods.quantity) as sum_quantity,sum(order_foods.price) as sum_price,menu_products.name,menu_products.description,menu_products.image_url,orders.paid FROM `orders`,`order_foods`,menu_products 
@@ -26,7 +27,7 @@ class PrinterController extends Controller
                    and orders.id = :id
                    group by orders.id,order_foods.product_id', ['id' => $order->id,'restaurant_id' => 1]);
 
-        $totalPrice = $order->price*1.1;
+        $totalPrice = number_format($order->price*1.1, 1, '.', ',');
         $ServiceCharge = $order->price*0.1;
 
         $printData = '<CB>Sean Cafe</CB><BR><BR>';
@@ -39,16 +40,40 @@ class PrinterController extends Controller
         $printData .= '<B>桌號 : ' .$order->table_id.'</B><BR><BR>';
         $printData .= '人數 : ' .$order->people.'<BR><BR>';
         $printData .= '日期 : ' .date('Y-m-d H:i:s').'<BR><BR>';
-        $printData .= '<RIGHT>    　　　　　 價錢  數量 </RIGHT><BR>';
+        $printData .= '<RIGHT>    　　　　　 數量  價錢 </RIGHT><BR>';
         $printData .= '--------------------------------<BR>';
         foreach($orderFoods as $orderFood){
-            $printData .= '<RIGHT>'.$orderFood->name . '　  ' . $orderFood->sum_price. '   ' . $orderFood->sum_quantity. '</RIGHT><BR>';
+            $priceSpace ='';
+            if(strlen($orderFood->sum_price)==2){
+                $priceSpace =' ';
+            }elseif(strlen($orderFood->sum_price)==1){
+                $priceSpace ='  ';
+            }
+
+            $printData .= '<RIGHT><BOLD><L>'.$orderFood->name.'　 '. $orderFood->sum_quantity.'  '.$priceSpace.'$'.$orderFood->sum_price.'</L></BOLD></RIGHT><BR>';
         }
+//        foreach($orderFoods as $orderFood){
+////            dd(mb_strlen($orderFood->name));
+////            dd(mb_substr ($orderFood->name,0,(mb_strlen($orderFood->name)/2)));
+////            dd(mb_substr ($orderFood->name,(mb_strlen($orderFood->name)/2),mb_strlen($orderFood->name)));
+//
+//            if(mb_strlen($orderFood->name) > 10){
+//                $printData .= '<BOLD><L>'.mb_substr ($orderFood->name,0,10) . '              '.mb_substr ($orderFood->name,10,mb_strlen($orderFood->name)).'　                 ' .$orderFood->sum_quantity. '  $' .$orderFood->sum_price. '</L></BOLD><BR>';
+//            }else{
+//                $space = 34;
+//                $space = $space - strlen($orderFood->name);
+//                $text ='';
+//                for($i =0; $i < $space;$i++){
+//                    $text .= ' ';
+//                }
+//                $printData .= '<RIGHT><BOLD><L>'.$orderFood->name . $text . $orderFood->sum_quantity. '  $' .$orderFood->sum_price . '</L></BOLD></RIGHT><BR>';
+//            }
+//        }
         $printData .= '--------------------------------<BR>';
-        $printData .= '<RIGHT>小計　　　　 　             ' . $order->price. '</RIGHT><BR>';
-        $printData .= '<RIGHT>服務費　　　　 　          ' . $ServiceCharge. '</RIGHT><BR>';
+        $printData .= '<RIGHT>小計　　　　 　           $' . $order->price. '</RIGHT><BR>';
+        $printData .= '<RIGHT>服務費　　　　 　        $' . $ServiceCharge. '</RIGHT><BR>';
         $printData .= '--------------------------------<BR>';
-        $printData .= '<RIGHT>合計　　　　 　          ' . $totalPrice. '</RIGHT><BR>';
+        $printData .= '<RIGHT><B>合計　　$' . $totalPrice. '</B></RIGHT><BR>';
         $printData .= '<BR>';
         $printData .= '<BR>';
         $printData .= '<BR>';
