@@ -328,11 +328,11 @@
                             <ul class="nav nav-pills nav-justified">
                                 @foreach($menus as $menu)
                                     @if($menu->name =="套餐")
-                                        <li class="active"><a style="font-size: 32px;" data-toggle="pill" href="#{{$menu->name}}">{{$menu->name}}</a></li>
+                                        <li class="active"><a style="font-size: 32px;" data-toggle="pill" href="#add{{$menu->name}}">{{$menu->name}}</a></li>
                                     @elseif($menu->name =="貝果/牛角包")
-                                        <li><a style="font-size: 32px;" data-toggle="pill" href="#貝果牛角包">{{$menu->name}}</a></li>
+                                        <li><a style="font-size: 32px;" data-toggle="pill" href="#add貝果牛角包">{{$menu->name}}</a></li>
                                     @else
-                                        <li><a style="font-size: 32px;" data-toggle="pill" href="#{{$menu->name}}">{{$menu->name}}</a></li>
+                                        <li><a style="font-size: 32px;" data-toggle="pill" href="#add{{$menu->name}}">{{$menu->name}}</a></li>
                                     @endif
                                 @endforeach
                             </ul>
@@ -340,37 +340,37 @@
                             <div class="tab-content">
                                 @foreach($menus as $menu)
                                     @if($menu->name =="套餐")
-                                        <div id="{{$menu->name}}" class="tab-pane fade in active">
-                                            @elseif($menu->name =="貝果/牛角包")
-                                                <div id="貝果牛角包" class="tab-pane fade">
-                                                    @else
-                                                        <div id="{{$menu->name}}" class="tab-pane fade">
-                                                            @endif
-                                                            <div class="row">
-                                                                @foreach($productMenus as $productMenu)
-                                                                    @if($productMenu->menu_id == $menu->id)
-                                                                        <div class="col-sm-4">
-                                                                            <div class="row">
-                                                                                <div class="col-xs-12 col-md-9">
-                                                                                    <h2 class="control-label pull-left">{{$productMenu->product_name}}</h2>
-                                                                                </div>
-                                                                                <div class="col-xs-12 col-md-3">
-                                                                                    <h3 class="control-label">${{$productMenu->price}}</h3>
-                                                                                </div>
-                                                                            </div>
-                                                                            <input name="{{$productMenu->product_id}}" style="font-size: 34px;height: 50px;" class="form-control number-type" type="number" value="0" min="0" max="20" readonly/>
-                                                                        </div>
-                                                                    @endif
-                                                                @endforeach
+                                        <div id="add{{$menu->name}}" class="tab-pane fade in active">
+                                    @elseif($menu->name =="貝果/牛角包")
+                                        <div id="add貝果牛角包" class="tab-pane fade">
+                                    @else
+                                        <div id="add{{$menu->name}}" class="tab-pane fade">
+                                    @endif
+                                        <div class="row">
+                                            @foreach($productMenus as $productMenu)
+                                                @if($productMenu->menu_id == $menu->id)
+                                                    <div class="col-sm-4">
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-md-9">
+                                                                <h2 class="control-label pull-left">{{$productMenu->product_name}}</h2>
+                                                            </div>
+                                                            <div class="col-xs-12 col-md-3">
+                                                                <h3 class="control-label">${{$productMenu->price}}</h3>
                                                             </div>
                                                         </div>
-                                                        @endforeach
+                                                        <input name="{{$productMenu->product_id}}" style="font-size: 34px;height: 50px;" class="form-control number-type" type="number" value="0" min="0" max="20" readonly/>
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                        </div>
+                                @endforeach
                                                 </div>
                                         </div>
-                                        <div class="modal-footer">
-                                            <input style="font-size: 24px" type="submit" class="btn btn-secondary pull-right" value="確認"/>
-                                        </div>
-                            </div>
+                        <div class="modal-footer">
+                            <input style="font-size: 24px" type="submit" class="btn btn-secondary pull-right" value="確認"/>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
