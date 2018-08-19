@@ -17,5 +17,5 @@ $uri = urldecode(
 if ($uri !== '/' && file_exists(__DIR__.'/public'.$uri)) {
     return false;
 }
-//12345678
+//asdsssa5ss
 require_once __DIR__.'/public/index.php';
