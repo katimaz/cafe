@@ -164,6 +164,7 @@
                     </button>
                     <h1 class="modal-title" id="payment-title"></h1>
                     <input style="font-size: 24px" type="button" class="btn btn-secondary pull-right" id="printReceipt" value="影印收據"/>
+                    <input style="font-size: 24px;margin-right: 10px" type="button" class="btn btn-secondary pull-right" id="printEnglishReceipt" value="影印英文收據"/>
                 </div>
                 <div id="main-payment" class="modal-body">
                     <div class="container-fluid">
@@ -603,6 +604,20 @@
         $.ajax({
             type: 'get',
             url: "orderTablePrintReceipt?table_id="+table_id,
+            success: function(result){
+                $json = JSON.parse(result);
+                if(!jQuery.isEmptyObject($json)){
+
+                }
+            }
+        });
+    });
+
+    $('#printEnglishReceipt').click(function(){
+        var table_id = $('#payment_table_id').val();
+        $.ajax({
+            type: 'get',
+            url: "orderTablePrintEnglishReceipt?table_id="+table_id,
             success: function(result){
                 $json = JSON.parse(result);
                 if(!jQuery.isEmptyObject($json)){

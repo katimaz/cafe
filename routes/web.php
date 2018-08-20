@@ -77,6 +77,8 @@ Route::post('/admin/orderAddFood', 'AdminController@orderAddFood')->name('admin.
 Route::post('/admin/orderPayment', 'AdminController@orderPayment')->name('admin.orderPayment');
 
 Route::get('/admin/orderTablePrintReceipt', 'PrinterController@orderTablePrintReceipt')->name('admin.orderTablePrintReceipt');
+Route::get('/admin/orderTablePrintEnglishReceipt', 'PrinterController@orderTablePrintEnglishReceipt')->name('admin.orderTablePrintEnglishReceipt');
+
 
 Route::get('/admin/tableStatus', 'AdminController@tableStatus')->name('admin.tableStatus');
 

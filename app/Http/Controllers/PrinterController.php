@@ -93,6 +93,69 @@ class PrinterController extends Controller
         echo true;
     }
 
+
+    public function orderTablePrintEnglishReceipt(Request $request){
+
+
+        $order = Order::where('table_id',$request->table_id)->where('paid',0)->first();
+
+        $orderFoods  = DB::select('SELECT orders.id,order_foods.product_id,sum(order_foods.quantity) as sum_quantity,sum(order_foods.price) as sum_price,menu_products.name,menu_products.en_name,menu_products.description,menu_products.image_url,orders.paid FROM `orders`,`order_foods`,menu_products 
+                   WHERE orders.id = order_foods.order_id 
+                   and order_foods.product_id = menu_products.id
+                   and orders.restaurant_id = :restaurant_id
+                   and orders.id = :id
+                   group by orders.id,order_foods.product_id', ['id' => $order->id,'restaurant_id' => 1]);
+
+        $totalPrice = number_format($order->price*1.1, 1, '.', ',');
+        $ServiceCharge = $order->price*0.1;
+
+        $printData = '<CB>Sean Cafe</CB><BR><BR>';
+        $printData .= 'Address: 九龍尖沙咀漆咸道南29-31號溫莎大廈地下12號A號舖';
+        $printData .= '<BR>';
+        $printData .= 'Tel: 6676 9679';
+        $printData .= '<BR>';
+        $printData .= '--------------------------------<BR>';
+        $printData .= '<B>Order No. : ' .$order->id.$order->table_id.'</B><BR><BR>';
+        $printData .= '<B>Table No. : ' .$order->table_id.'</B><BR><BR>';
+        $printData .= 'People : ' .$order->people.'<BR><BR>';
+        $printData .= 'Date : ' .date('Y-m-d H:i:s').'<BR><BR>';
+        $printData .= '<RIGHT>    　　　Quantity  Price </RIGHT><BR>';
+        $printData .= '--------------------------------<BR>';
+        foreach($orderFoods as $orderFood){
+            $priceSpace ='';
+            if(strlen($orderFood->sum_price)==2){
+                $priceSpace =' ';
+            }elseif(strlen($orderFood->sum_price)==1){
+                $priceSpace ='  ';
+            }
+
+            $printData .= '<RIGHT><BOLD><L>'.$orderFood->en_name.'　 '. $orderFood->sum_quantity.'  '.$priceSpace.'$'.$orderFood->sum_price.'</L></BOLD></RIGHT><BR>';
+        }
+
+        $printData .= '--------------------------------<BR>';
+        $printData .= '<RIGHT>Total　　 　           $' . $order->price. '</RIGHT><BR>';
+        $printData .= '<RIGHT>Services Charges　　　　 　   $' . $ServiceCharge. '</RIGHT><BR>';
+        $printData .= '--------------------------------<BR>';
+        $printData .= '<RIGHT><B>Sub Total　$' . $totalPrice. '</B></RIGHT><BR>';
+        $printData .= '<BR>';
+        $printData .= '<BR>';
+        $printData .= '<BR>';
+        $printData .= '<RIGHT>Powered by QuickOrder     </RIGHT><BR>';
+        $printData .= '<RIGHT>Please Visit http://hkqos.com   </RIGHT><BR>';
+        $printData .= '<BR>';
+        $printData .= '<BR>';
+
+        $printers = Printers::where('printer_type_id','=','1')->get();
+
+        foreach($printers as $printer){
+
+            $this->setPrinter($printer->account, $printer->account_key, $printer->printer_sn);
+            $this->getPrint($printData);
+        }
+
+        echo true;
+    }
+
     public function printKey($count)
     {
         if ($count) {

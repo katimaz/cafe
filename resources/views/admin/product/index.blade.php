@@ -24,6 +24,7 @@
         <thead>
         <tr>
             <th>@lang('admin.product.name')</th>
+            <th>@lang('admin.product.en_name')</th>
             <th>@lang('admin.product.type')</th>
             <th>@lang('admin.product.price')</th>
             {{--<th>@lang('admin.product.printer')</th>--}}
@@ -36,6 +37,7 @@
         @foreach($products as $product)
             <tr>
                 <td>{{$product->products_name}}</td>
+                <td>{{$product->en_name}}</td>
                 <td>{{$product->menu_name}}</td>
                 <td>{{$product->price}}</td>
                 {{--<td>{{$product->printer_name}}</td>--}}

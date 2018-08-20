@@ -76,6 +76,7 @@ class AdminController extends Controller
         $product = new MenuProduct();
 
         $product->name = $request->name;
+        $product->en_name = $request->en_name;
         $product->description = $request->description;
         $product->menu_id = $request->menu_id;
         $product->printer_id = $request->printer_id;
@@ -120,6 +121,7 @@ class AdminController extends Controller
         $product = MenuProduct::find($id);
 
         $product->name = $request->name;
+        $product->en_name = $request->en_name;
         $product->description = $request->description;
         $product->menu_id = $request->menu_id;
         $product->printer_id = $request->printer_id;

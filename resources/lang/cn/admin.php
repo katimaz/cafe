@@ -46,6 +46,7 @@ return [
     'order.payment' =>'付款方式',
 
     'product.name' =>'食物名稱',
+    'product.en_name' => '英文食物名稱',
     'product.type' =>'菜單類別',
     'product.description' =>'內容',
     'product.price' =>'價錢',

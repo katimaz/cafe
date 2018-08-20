@@ -30,6 +30,12 @@
                         <input type="text" class="form-control" id="name" placeholder="Enter Name" name="name" value="{{$product->name}}">
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="name">@lang('admin.product.en_name'):</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="name" placeholder="Enter English Name" name="en_name" value="{{$product->en_name}}">
+                    </div>
+                </div>
                 {{--<div class="form-group">--}}
                     {{--<label class="control-label col-sm-2" for="name">@lang('admin.product.description'):</label>--}}
                     {{--<div class="col-sm-8">--}}
